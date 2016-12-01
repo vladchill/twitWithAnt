@@ -1,0 +1,24 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Twitter test" verbose="1">
+    <listeners>
+        <listener class-name="org.uncommons.reportng.HTMLReporter" />
+        <listener class-name="org.uncommons.reportng.JUnitXMLReporter" />
+        <!--<listener class-name="utils.TestListenerCustom" />-->
+    </listeners>
+
+    <test name="Twitter Test" preserve-order="true">
+        <parameter name="daysRange" value="2" />
+        <classes>
+            <class name="com.qatestlab.twit.TestLoginPage">
+
+            </class>
+            <!--<class name="com.qatestlab.twit.TestTwitRange">-->
+                <!--&lt;!&ndash;<methods>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<include name="testEmailSendReceive"/>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<include name="testChangeWindowsFocus"/>&ndash;&gt;-->
+                <!--&lt;!&ndash;</methods>&ndash;&gt;-->
+            <!--</class>-->
+        </classes>
+    </test>
+
+</suite>
