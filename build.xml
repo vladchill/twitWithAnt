@@ -1,4 +1,6 @@
-<project name="DataTile" default="testDataTile">
+<project name="twitWithAnt" default="testDataTile" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+    <!-- Project properties -->
     <property name="src.dir"                location="${basedir}${file.separator}src"/>
     <property name="config.dir"             location="${basedir}${file.separator}config"/>
     <property name="build.dir"              location="${basedir}${file.separator}build"/>
@@ -13,13 +15,47 @@
     <property name="reportNGcss"            location="${basedir}${file.separator}config${file.separator}reportStyle.css"/>
     <property name="upload.dir"             value="${basedir}${file.separator}upload${file.separator}"/>
 
+    <!-- Ivy properties -->
+    <property name="ivy.install.version" value="2.4.0"/>
+    <property name="ivy.jar.dir" value="${basedir}/ivy"/>
+    <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
+    <property name="ivy.lib.dir" value="${basedir}/lib"/>
+
+    <path id="lib.path.id">
+        <fileset dir="${ivy.lib.dir}" />
+    </path>
+
+
     <!--Tasks definitions-->
-    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
-        <classpath>
-            <pathelement location="${lib.dir}${file.separator}ant${file.separator}ant-contrib-1.0b3.jar"/>
-        </classpath>
-    </taskdef>
-    <taskdef resource="testngtasks" classpath="${lib.dir}${file.separator}testng-6.9.4.jar"/>
+    <!--<taskdef resource="net/sf/antcontrib/antcontrib.properties" />-->
+        <!--<classpath>-->
+            <!--<pathelement location="${lib.dir}${file.separator}ant-contrib-1.0b3.jar"/>-->
+        <!--</classpath>-->
+    <!--&lt;!&ndash;<classpath>&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;<path refid="lib.path.id"/>&ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;&lt;!&ndash;</classpath>&ndash;&gt;&ndash;&gt;-->
+    <!--</taskdef>-->
+    <taskdef resource="testngtasks"  classpath="${lib.dir}${file.separator}testng-6.9.13.6.jar"/>
+
+    <!--Ivy tasks-->
+
+    <target name="download-ivy" unless="skip.download">
+        <mkdir dir="${ivy.jar.dir}"/>
+        <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+             dest="${ivy.jar.file}" usetimestamp="true"/>
+    </target>
+
+    <target name="install-ivy" depends="download-ivy" description="Install ivy">
+        <path id="ivy.lib.path">
+            <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+        </path>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+    </target>
+
+    <target name="ret" depends="install-ivy" description="Download project dependencies">
+        <ivy:resolve refresh="true" showprogress="true" />
+        <ivy:retrieve/>
+    </target>
 
 
     <target name="setVariables" description="Set browser, base.url, report directory variables">
@@ -60,7 +96,7 @@
         <delete dir="${build.dir}"/>
     </target>
 
-    <target name="reportDir">
+    <target name="reportDir" description="Create repoort dir">
         <mkdir dir="${report.dir}"/>
     </target>
 
@@ -78,9 +114,9 @@
             depends="reportDir, buildDirs">
 
         <!--Create required dirs-->
-        <mkdir dir="${jar.dir}"/>
-        <mkdir dir="${bin.dir}"/>
-        <mkdir dir="${report.dir}"/>
+        <!--<mkdir dir="${jar.dir}"/>-->
+        <!--<mkdir dir="${bin.dir}"/>-->
+        <!--<mkdir dir="${report.dir}"/>-->
 
         <!--Create one jar file from all test classes-->
         <path id="classpath">
@@ -115,10 +151,10 @@
                 haltOnfailure="false"
                 delegateCommandSystemProperties="true"
                 useDefaultListeners="false"
-                listeners="org.uncommons.reportng.HTMLReporter, com.qatestlab.reporting.TestListener,
-                org.uncommons.reportng.JUnitXMLReporter, org.testng.reporters.XMLReporter">
+                listeners="org.uncommons.reportng.HTMLReporter,
+                                org.uncommons.reportng.JUnitXMLReporter, ru.yandex.qatools.allure.testng.AllureTestListener">
 
-            <xmlfileset dir="${testng.dir}" includes="*.xml"/>
+            <xmlfileset dir="${basedir}" includes="testng.xml"/>
 
             <sysproperty key="org.uncommons.reportng.title" value="Automated Test Report"/>
             <sysproperty key="org.uncommons.reportng.frames" value="false"/>
