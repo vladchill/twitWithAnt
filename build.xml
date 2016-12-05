@@ -27,6 +27,11 @@
         <fileset dir="${ivy.lib.dir}" />
     </path>
 
+    <target name="ll">
+        <echo>${browss}</echo>
+    </target>
+
+
 
     <!--Tasks definitions-->
     <!--<taskdef resource="net/sf/antcontrib/antcontrib.properties" />-->
@@ -135,6 +140,13 @@
     </target>
 
 
+    <path id="classpath">
+        <fileset dir="${lib.dir}" includes="*.jar"/>
+        <fileset dir="${lib.dir}" includes="${file.separator}reporting${file.separator}*.jar"/>
+        <!--<fileset dir="${lib.dir}${file.separator}testlink" includes="*.jar"/>-->
+        <fileset dir="${jar.dir}" includes="**/*jar"/>
+    </path>
+
     <!--Test targets-->
     <target name="testDataTile" depends="clean, prepare"> <!--setVariables-->
 
@@ -153,6 +165,13 @@
                                 org.uncommons.reportng.JUnitXMLReporter, ru.yandex.qatools.allure.testng.AllureTestListener">
 
             <xmlfileset dir="${basedir}" includes="testng.xml"/>
+
+            <sysproperty key="webbrowser" value="${webbrowser}"/>
+            <sysproperty key="driver.exe.chrome"
+                         value="${basedir}${file.separator}resources${file.separator}chromedriver.exe"/>
+            <sysproperty key="driver.exe.ie"
+                         value="${basedir}${file.separator}resources${file.separator}IEDriverServer.exe"/>
+
 
             <!--<sysproperty key="org.uncommons.reportng.title" value="Automated Test Report"/>-->
             <!--<sysproperty key="org.uncommons.reportng.frames" value="false"/>-->
